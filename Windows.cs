@@ -6,7 +6,7 @@ namespace Utilities
 {
 	public static class Windows
 	{
-		private static bool IsKeyDown(Keys key)
+		public static bool IsKeyDown(Keys key)
 		{
 			const ushort MSB = 0x8000;
 			return (WinAPI.GetAsyncKeyState(key) & MSB) == MSB;

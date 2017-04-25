@@ -17,8 +17,8 @@ namespace SingleTonTest
 			if (!args.Any())
 				args = new[] { $"{DateTime.Now:HH:mm:ss}" };
 
-			var sam = new SingleTonAppManager(appId, args, MaxMem);
-			if (sam.IsRunning)
+			var sam = Windows.IsKeyDown(Keys.ShiftKey) ? null : new SingleTonAppManager(appId, args, MaxMem);
+			if (sam != null && sam.IsRunning)
 			{
 				sam.ActivateRunningApp();
 				sam.Dispose();

@@ -19,7 +19,8 @@ namespace SingleTonTest
 		}
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			_sam.Dispose();
+			if (_sam != null)
+				_sam.Dispose();
 		}
 		private void OnItemsAdded(List<SingleTonAppManager.MappedItem> allItems)
 		{
@@ -27,7 +28,8 @@ namespace SingleTonTest
 		}
 		protected override void WndProc(ref Message m)
 		{
-			_sam.WndProcHandler(m, this, OnItemsAdded);
+			if (_sam != null)
+				_sam.WndProcHandler(m, this, OnItemsAdded);
 			base.WndProc(ref m);
 		}
 		private void AddItems(IEnumerable<string> items)
