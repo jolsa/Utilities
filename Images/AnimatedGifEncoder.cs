@@ -21,10 +21,7 @@ namespace Utilities.Images
 		/// <summary>
 		/// Return the GIF specification version.
 		/// </summary>
-		public string EncoderVersion
-		{
-			get { return EncoderVersionInfo; }
-		}
+		public string EncoderVersion => EncoderVersionInfo;
 
 		/// <summary>
 		/// Get or set a value that indicate if the GIF will repeat the animation after the last frame is shown. The default value is True
@@ -57,14 +54,10 @@ namespace Utilities.Images
 				AddFrameRange(frames);
 		}
 
-		public void AddFrame(Bitmap frame)
-		{
-			_frames.Add(frame);
-		}
-		public void AddFrameRange(IEnumerable<Bitmap> frames)
-		{
-			_frames.AddRange(frames);
-		}
+		public void AddFrame(Bitmap frame) =>			_frames.Add(frame);
+
+		public void AddFrameRange(IEnumerable<Bitmap> frames) =>			_frames.AddRange(frames);
+
 		public void Save(Stream outputStream)
 		{
 			//	Make sure we have frames

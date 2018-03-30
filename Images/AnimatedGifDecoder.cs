@@ -77,40 +77,27 @@ namespace Utilities.Images
 			}
 		}
 
-		private static List<int> GetFrameRates(Image image, int frames)
-		{
-			var bytes = image.GetPropertyItem(0x5100).Value;
-			return Enumerable.Range(0, frames).Select(f => BitConverter.ToInt32(bytes, 4 * f) * 10).ToList();
-		}
-		public static List<int> GetFrameRates(Image image)
-		{
-			var dim = new FrameDimension(image.FrameDimensionsList.First());
-			var frames = image.GetFrameCount(dim);
-			return GetFrameRates(image, frames);
-		}
+		private static List<int> GetFrameRates(Image image, int frames) =>
+			Enumerable.Range(0, frames).Select(f => BitConverter.ToInt32(image.GetPropertyItem(0x5100).Value, 4 * f) * 10).ToList();
 
-		private static List<Bitmap> GetFrames(Image image, int frames, FrameDimension dimension)
-		{
-			var bmps = new List<Bitmap>();
-			for (int f = 0; f < frames; f++)
+		public static List<int> GetFrameRates(Image image) =>
+			GetFrameRates(image, image.GetFrameCount(new FrameDimension(image.FrameDimensionsList.First())));
+
+		private static List<Bitmap> GetFrames(Image image, int frames, FrameDimension dimension) =>
+			Enumerable.Range(0, frames).Select(f =>
 			{
 				image.SelectActiveFrame(dimension, f);
-				bmps.Add(new Bitmap(image));
-			}
-			return bmps;
-		}
+				return new Bitmap(image);
+			}).ToList();
+
 		public static List<Bitmap> GetFrames(Image image)
 		{
 			var dim = new FrameDimension(image.FrameDimensionsList.First());
-			var frames = image.GetFrameCount(dim);
-			return GetFrames(image, frames, dim);
+			return GetFrames(image, image.GetFrameCount(dim), dim);
 		}
 
-		public static bool IsAnimated(Image image)
-		{
-			var dim = new FrameDimension(image.FrameDimensionsList.First());
-			return image.GetFrameCount(dim) > 1;
-		}
+		public static bool IsAnimated(Image image) =>
+			image.GetFrameCount(new FrameDimension(image.FrameDimensionsList.First())) > 1;
 
 	}
 }
