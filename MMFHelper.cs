@@ -2,6 +2,8 @@
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 
 namespace Utilities
@@ -33,14 +35,21 @@ namespace Utilities
 		}
 		private void CreateMMF(long capacity)
 		{
+			var security = new MemoryMappedFileSecurity();
+			security.AddAccessRule(new AccessRule<MemoryMappedFileRights>(
+				new SecurityIdentifier(
+					WellKnownSidType.WorldSid, null),
+					MemoryMappedFileRights.FullControl,
+					AccessControlType.Allow));
 			try
 			{
-				MMF = MemoryMappedFile.OpenExisting(AppId);
+				MMF = MemoryMappedFile.OpenExisting(AppId, MemoryMappedFileRights.FullControl, HandleInheritability.Inheritable);
+				MMF.SetAccessControl(security);
 				IsRunning = true;
 			}
 			catch (FileNotFoundException)
 			{
-				MMF = MemoryMappedFile.CreateNew(AppId, capacity);
+				MMF = MemoryMappedFile.CreateNew(AppId, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.None, security, HandleInheritability.Inheritable);
 				using (var accessor = MMF.CreateViewAccessor())
 					accessor.Write(0, 0);
 				IsRunning = false;
