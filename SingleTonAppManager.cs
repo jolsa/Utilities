@@ -27,9 +27,8 @@ namespace Utilities
 		private const string TagTime = "t";
 		private const string TagContent = "c";
 
-		private MemoryMappedFile _mmf;
+		private MMFHelper _mmfHelper;
 		private object _lock = new object();
-		private string _appId;
 		private int _writes;
 
 		private int WM_SHOW_APP;
@@ -58,13 +57,17 @@ namespace Utilities
 		/// <param name="memoryMapSize">Size (in bytes) of memory mapped file</param>
 		public SingleTonAppManager(string appId, IEnumerable<string> args, long memoryMapSize = DefaultMem)
 		{
-			_appId = appId;
+			_mmfHelper = new MMFHelper(appId, memoryMapSize);
+			if (!_mmfHelper.IsRunning)
+			{
+				using (var accessor = _mmfHelper.MMF.CreateViewAccessor())
+					accessor.Write(ContentOffset, 0);
+			}
 			WM_SHOW_APP = WinAPI.RegisterWindowMessage(appId);
-			CreateMMF(memoryMapSize);
 			AppendToMMF(args.ToArray());
 		}
 
-		public bool IsRunning { get; private set; }
+		public bool IsRunning => _mmfHelper.IsRunning;
 
 		public void WndProcHandler(Message m, Form theForm, Action<List<MappedItem>> getMappedItems = null)
 		{
@@ -80,28 +83,12 @@ namespace Utilities
 			WinAPI.PostMessage(WinAPI.HWND_BROADCAST, WM_SHOW_APP, IntPtr.Zero, IntPtr.Zero); 
 		}
 
-		private void CreateMMF(long capacity)
-		{
-			try
-			{
-				_mmf = MemoryMappedFile.OpenExisting(_appId);
-				IsRunning = true;
-			}
-			catch (FileNotFoundException)
-			{
-				_mmf = MemoryMappedFile.CreateNew(_appId, capacity);
-				using (var accessor = _mmf.CreateViewAccessor())
-					accessor.Write(ContentOffset, 0);
-				IsRunning = false;
-			}
-		}
-
 		private void AppendToMMF(params string[] content)
 		{
 			lock (_lock)
 			{
 				uint size, pos;
-				using (var accessor = _mmf.CreateViewAccessor())
+				using (var accessor = _mmfHelper.MMF.CreateViewAccessor())
 				{
 					//	Increment Writes and Save
 					_writes = accessor.ReadInt32(WriteOffset) + 1;
@@ -134,7 +121,7 @@ namespace Utilities
 
 		public List<MappedItem> GetMMFData()
 		{
-			using (var accessor = _mmf.CreateViewAccessor())
+			using (var accessor = _mmfHelper.MMF.CreateViewAccessor())
 			{
 				//	Get size
 				var size = accessor.ReadUInt32(ContentOffset);
@@ -155,7 +142,7 @@ namespace Utilities
 			if (!_disposed)
 			{
 				if (disposing)
-					_mmf.Dispose();
+					_mmfHelper.Dispose();
 				_disposed = true;
 			}
 		}
