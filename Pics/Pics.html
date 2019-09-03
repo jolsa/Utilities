@@ -1,0 +1,103 @@
+<html>
+<head>
+    <style type="text/css">
+    	html { font-family: 'Arial'; font-size: 10pt; }
+    	input { margin: 0 5px 0 5px; width: 60px; text-align: right; }
+        img { margin: 2px 2px 4px 4px; }
+        span { font-weight: bold; }
+		#hval { margin-bottom: 15px; }
+		#cmd { font-family: Consolas; width: 500px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div>
+        <span>Height:</span><input id="hval"/>
+        <span>Border:</span><input id="border" value="0" />
+        <span>Margin:</span><input id="margin" value="2" />
+        <span>Command:</span><input id="cmd" readonly="readonly" value="filestojson . /s /x:exclude.txt > pics.json"/>
+    </div>
+    <div id="pics"></div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="pics.json"></script>
+    <script>
+        $(function()
+		{
+			const height = 600;
+			const rx = new RegExp(encodeURIComponent('/'), 'g');
+			const hv = $("#hval");
+			const bs = $("#border");
+			const mg = $("#margin");
+			hv.focus().val(height);
+			$("#pics").append($.makeArray(files.map(m =>
+				{
+					let img = $("<img/>");
+					img[0].src = encodeURIComponent(m.file).replace(rx, '/');
+					img[0].title = m.title;
+					img[0].height = height;
+					return img;
+				})));
+			incSize = (obj, amt) => {
+				let val = obj.val() | 0;
+				obj.val(val+=amt);
+				if (obj[0] === hv[0])
+					setSize();
+				else if (obj[0] === bs[0])
+					setBorder();
+				else if (obj[0] === mg[0])
+					setMargin();
+			};
+			setSize = () => {
+				const val = hv.val() | 0;
+				if (val)
+					$("img").height(val);
+			};
+			setBorder = () => {
+				const val = bs.val() | 0;
+				$("img").css("border", `${val}px solid black`);
+			};
+			setMargin = () => {
+				const val = mg.val() | 0;
+				const om = val ? val * 2 : 0;
+				$("img").css("margin", `${val}px ${val}px ${om}px ${om}px`);
+			};
+			hv.change(setSize);
+			bs.change(setBorder);
+			$('#hval, #border, #margin').keydown(e =>
+			{
+				const k = e.which;
+				const t = $(e.target);
+				let handled = true;
+				if (k === 27) {
+					hv.val(50);
+					bs.val(0);
+					mg.val(2);
+					if (t[0] === hv[0])
+						setSize();
+					else if (t[0] === bs[0])
+						setBorder();
+					else if (t[0] === mg[0])
+						setMargin();
+				}
+				// 38: up
+				else if (k === 38)
+					incSize(t, 1);
+				// 40: down
+				else if (k === 40)
+					incSize(t, -1);
+				// 33: page up
+				else if (k === 33 && t[0] === hv[0])
+					incSize(t, 10);
+				// 34: page down
+				else if (k === 34 && t[0] === hv[0])
+					incSize(t, -10);
+				else
+					handled = false;
+
+				if (handled)
+					e.preventDefault();
+
+			});
+		});
+    </script>
+</body>
+</html>
