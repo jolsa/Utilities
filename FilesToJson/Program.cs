@@ -23,6 +23,7 @@ namespace FilesToJson
 		static void Main(string[] args)
 		{
 			var includeSubs = args.Any(a => a.Equals("/s", StringComparison.OrdinalIgnoreCase));
+			var includePath = args.Any(a => a.Equals("/i", StringComparison.OrdinalIgnoreCase));
 			var path = Path.GetFullPath(ReplaceEnvironmentVars(args.FirstOrDefault(a => Directory.Exists(ReplaceEnvironmentVars(a))) ?? "."));
 			var excludeFile = args.FirstOrDefault(a => a.StartsWith("/x:", StringComparison.OrdinalIgnoreCase) && File.Exists(ReplaceEnvironmentVars(a.Substring(3))));
 			var exclusions = new string[0];
@@ -43,9 +44,10 @@ namespace FilesToJson
 					Console.WriteLine($"Exclusions:\r\n{string.Join("\r\n", exclusions)}");
 				Console.WriteLine();
 			}
+			var subStart = includePath ? 0 : path.Length;
 			var files = Directory.GetFiles(path, "*.*", includeSubs ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
 				.Where(f => !exclusions.Any(x => Regex.IsMatch(f, x, RegexOptions.IgnoreCase)))
-				.Select(f => $@"    ""file"": ""{f.Substring(path.Length).Replace('\\', '/')}"",
+				.Select(f => $@"    ""file"": ""{f.Substring(subStart).Replace('\\', '/')}"",
     ""title"": ""{Path.GetFileNameWithoutExtension(f)}""{Constants.CrLf}");
 			Console.WriteLine($"{Constants.Prefix}{string.Join(Constants.Delimiter, files)}{Constants.Suffix}");
 		}

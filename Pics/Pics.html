@@ -31,7 +31,7 @@
 			$("#pics").append($.makeArray(files.map(m =>
 				{
 					let img = $("<img/>");
-					img[0].src = encodeURIComponent(m.file).replace(rx, '/');
+					img[0].src = encodeURIComponent(m.file).replace(rx, '/').replace(/^([A-z])%3A/,"$1:");
 					img[0].title = m.title;
 					img[0].height = height;
 					return img;
