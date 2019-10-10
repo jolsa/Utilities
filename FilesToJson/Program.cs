@@ -18,6 +18,9 @@ namespace FilesToJson
   {
 ";
 	}
+	/// <summary>
+	/// Programe
+	/// </summary>
 	class Program
 	{
 		static void Main(string[] args)
