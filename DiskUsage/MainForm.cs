@@ -39,13 +39,14 @@ namespace DiskUsage
 		{
 			Text = Application.ProductName;
 			_sizeRadioButtons = new List<RadioButton>() { bytesRadio, kbRadio, mbRadio, gbRadio };
-			drivesCombo.DataSource = DriveInfo.GetDrives()
-				.Select(d => new DriveEntry()
-				{
-					Name = d.Name,
-					Display = $@"{d.Name.Substring(0, 2)} {(string.IsNullOrEmpty(d.VolumeLabel)
-						? "" : $"({d.VolumeLabel})")}"
-				}).ToList();
+			LoadDrives();
+		}
+		private void MainForm_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.F5)
+				LoadDrives();
+			else if (e.KeyCode == Keys.Escape)
+				Close();
 		}
 		private void CheckButton_Click(object sender, EventArgs e) => AddDriveInfo();
 		private void FormatRadio_CheckedChanged(object sender, EventArgs e)
@@ -148,5 +149,13 @@ namespace DiskUsage
 			entryList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 			entryList.EndUpdate();
 		}
+		private void LoadDrives() => drivesCombo.DataSource = DriveInfo.GetDrives()
+			.Where(d => d.IsReady)
+			.Select(d => new DriveEntry()
+			{
+				Name = d.Name,
+				Display = $@"{d.Name.Substring(0, 2)} {(string.IsNullOrEmpty(d.VolumeLabel)
+					? "" : $"({d.VolumeLabel})")}"
+			}).ToList();
 	}
 }

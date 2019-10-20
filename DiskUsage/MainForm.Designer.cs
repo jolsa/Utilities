@@ -262,9 +262,11 @@
 			this.Controls.Add(this.PanelTop);
 			this.Controls.Add(this.PanelBottom);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.KeyPreview = true;
 			this.Name = "MainForm";
 			this.Text = "Form1";
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.contextMenuStrip1.ResumeLayout(false);
 			this.PanelBottom.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
