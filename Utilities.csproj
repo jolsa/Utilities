@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="ClipboardHelper.cs" />
     <Compile Include="ConfigHelper.cs" />
+    <Compile Include="Factors.cs" />
     <Compile Include="Images\ImageCodecInfoPlus.cs" />
     <Compile Include="Images\ImageFilesHelper.cs" />
     <Compile Include="Images\AnimatedGifDecoder.cs" />
