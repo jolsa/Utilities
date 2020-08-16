@@ -24,9 +24,9 @@ namespace Utilities.Images
 			ImageCodecInfo.GetImageDecoders()
 				 .SelectMany(d => d.FilenameExtension.Split(';').Select(x => x.Substring(1).Trim().ToLower())).ToList();
 
-		public static List<string> GetImageFiles(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly) =>
+		public static List<string> GetImageFiles(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly, params string[] additionalExtensions) =>
 			Directory.GetFiles(path, "*.*", searchOption)
-				.Join(ImageExtensions, f => Path.GetExtension(f), e => e, (f, e) => f, StringComparer.OrdinalIgnoreCase).ToList();
+				.Join(ImageExtensions.Concat(additionalExtensions), f => Path.GetExtension(f), e => e, (f, e) => f, StringComparer.OrdinalIgnoreCase).ToList();
 
 		public static Image CropImage(Image image, Rectangle cropArea)
 		{
