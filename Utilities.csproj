@@ -57,6 +57,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpecialFolderSerialization.cs" />
     <Compile Include="ClipboardHelper.cs" />
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="Factors.cs" />
