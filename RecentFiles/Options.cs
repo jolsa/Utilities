@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace RecentFiles
@@ -35,7 +36,7 @@ namespace RecentFiles
 			DialogResult = DialogResult.OK;
 			IncludeSubfolders = checkIncludeSubs.Checked;
 			Extensions = textExtensions.Text.Split(' ', ',', ';').Where(x => !string.IsNullOrWhiteSpace(x))
-				.Select(x => x.Trim()).ToList();
+				.Select(x => Regex.Match('.' + x.Trim(), @".*(\..*)").Groups[1].Value).ToList();
 			SearchContent = checkSearchContent.Checked;
 		}
 	}
