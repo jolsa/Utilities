@@ -20,25 +20,23 @@
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="pics.json"></script>
     <script>
-        $(function()
-		{
+		$(function () {
 			const height = 600;
 			const rx = new RegExp(encodeURIComponent('/'), 'g');
 			const hv = $("#hval");
 			const bs = $("#border");
 			const mg = $("#margin");
 			hv.focus().val(height);
-			$("#pics").append($.makeArray(files.map(m =>
-				{
-					let img = $("<img/>");
-					img[0].src = encodeURIComponent(m.file).replace(rx, '/').replace(/^([A-z])%3A/,"$1:");
-					img[0].title = m.title;
-					img[0].height = height;
-					return img;
-				})));
+			$("#pics").append($.makeArray(files.map(m => {
+				let img = $("<img/>");
+				img[0].src = encodeURIComponent(m.file).replace(rx, '/').replace(/^([A-z])%3A/, "$1:");
+				img[0].title = m.title;
+				img[0].height = height;
+				return img;
+			})));
 			incSize = (obj, amt) => {
 				let val = obj.val() | 0;
-				obj.val(val+=amt);
+				obj.val(val += amt);
 				if (obj[0] === hv[0])
 					setSize();
 				else if (obj[0] === bs[0])
@@ -62,8 +60,7 @@
 			};
 			hv.change(setSize);
 			bs.change(setBorder);
-			$('#hval, #border, #margin').keydown(e =>
-			{
+			$('#hval, #border, #margin').keydown(e => {
 				const k = e.which;
 				const t = $(e.target);
 				let handled = true;

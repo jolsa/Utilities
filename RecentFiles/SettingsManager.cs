@@ -14,7 +14,7 @@ namespace RecentFiles
 		static SettingsManager() => ReadSettings();
 		public static string ApplicationPath { get; } = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 		public static string SettingsFile { get; } = Path.Combine(ApplicationPath, "appSettings.json");
-		private static JsonSerializerSettings JsonSettings = new JsonSerializerSettings() { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore };
+		private static JsonSerializerSettings JsonSettings { get; } = new() { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore };
 		public static AppSettings Settings { get; private set; }
 		public static void ReadSettings()
 		{
